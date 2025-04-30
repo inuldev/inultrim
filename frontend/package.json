@@ -12,6 +12,9 @@
   "author": "inuldev",
   "license": "MIT",
   "dependencies": {
+    "@tanstack/react-query": "^5.74.11",
+    "axios": "^1.9.0",
+    "lucide-react": "^0.503.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.2",
