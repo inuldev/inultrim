@@ -30,8 +30,10 @@ export async function signup(req, res) {
         .json({ message: "Email already exists, please use a different one" });
     }
 
-    const idx = Math.floor(Math.random() * 100) + 1; // generate a num between 1-100
-    const randomAvatar = `https://avatar.iran.liara.run/public/${idx}.png`;
+    // Generate avatar using DiceBear (visually appealing random avatars)
+    // Using the "adventurer" style which creates colorful character avatars
+    const seed = Math.random().toString(36).substring(2, 10); // Random seed
+    const randomAvatar = `https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}`;
 
     const newUser = await User.create({
       email,

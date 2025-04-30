@@ -40,11 +40,24 @@ const OnboardingPage = () => {
   };
 
   const handleRandomAvatar = () => {
-    const idx = Math.floor(Math.random() * 100) + 1;
-    const randomAvatar = `https://avatar.iran.liara.run/public/${idx}.png`;
+    // Generate avatar using DiceBear (visually appealing random avatars)
+    // Choose from multiple styles: adventurer, avataaars, bottts, pixel-art, etc.
+    const styles = [
+      "adventurer",
+      "avataaars",
+      "bottts",
+      "pixel-art",
+      "lorelei",
+      "open-peeps",
+      "personas",
+      "micah",
+    ];
+    const randomStyle = styles[Math.floor(Math.random() * styles.length)];
+    const seed = Math.random().toString(36).substring(2, 10); // Random seed
+    const randomAvatar = `https://api.dicebear.com/7.x/${randomStyle}/svg?seed=${seed}`;
 
     setFormState({ ...formState, profilePic: randomAvatar });
-    toast.success("Random profile picture generated!");
+    toast.success(`Random ${randomStyle} avatar generated!`);
   };
 
   return (
