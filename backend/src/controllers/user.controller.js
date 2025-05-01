@@ -6,40 +6,66 @@ export async function getRecommendedUsers(req, res) {
     const currentUserId = req.user.id;
     const currentUser = req.user;
 
-    // Find all active (pending/accepted) friend requests where the current user is involved
-    const activeRequests = await FriendRequest.find({
-      $or: [
-        { sender: currentUserId, status: { $in: ["pending", "accepted"] } },
-        { recipient: currentUserId, status: { $in: ["pending", "accepted"] } },
-      ],
+    // Find all friend requests where the current user is involved
+    const allUserRequests = await FriendRequest.find({
+      $or: [{ sender: currentUserId }, { recipient: currentUserId }],
     });
 
-    // Find rejected requests where the current user was the sender
-    // (these users have rejected the current user's request, so don't show them)
-    const rejectedAsSenderRequests = await FriendRequest.find({
-      sender: currentUserId,
-      status: "rejected",
+    // Log all requests for debugging
+    console.log("All user requests:", {
+      total: allUserRequests.length,
+      byStatus: allUserRequests.reduce((acc, req) => {
+        acc[req.status] = (acc[req.status] || 0) + 1;
+        return acc;
+      }, {}),
     });
 
-    // Extract the IDs of users involved in active requests and users who rejected current user's request
-    const excludeUserIds = [
-      ...activeRequests.map((request) => {
-        if (request.sender.toString() === currentUserId) {
-          return request.recipient.toString();
-        } else {
-          return request.sender.toString();
-        }
-      }),
-      ...rejectedAsSenderRequests.map((request) =>
-        request.recipient.toString()
-      ),
-    ];
+    // Filter to only get active (pending/accepted) requests
+    const activeRequests = allUserRequests.filter(
+      (req) => req.status === "pending" || req.status === "accepted"
+    );
+
+    // Find all users whose requests I have rejected
+    const usersWhoseRequestsIRejected = allUserRequests
+      .filter(
+        (req) =>
+          req.status === "rejected" &&
+          req.recipient.toString() === currentUserId
+      )
+      .map((req) => req.sender.toString());
+
+    console.log(
+      "Users whose requests I rejected:",
+      usersWhoseRequestsIRejected
+    );
+
+    // Extract IDs of users who are already friends with the current user
+    const friendIds = currentUser.friends.map((id) => id.toString());
+
+    // Extract IDs of users with active (pending/accepted) requests
+    const activeUserIds = activeRequests.map((request) => {
+      if (request.sender.toString() === currentUserId) {
+        return request.recipient.toString();
+      } else {
+        return request.sender.toString();
+      }
+    });
 
     // Combine all IDs to exclude from recommendations
     const excludeIds = [
-      ...currentUser.friends.map((id) => id.toString()),
-      ...excludeUserIds,
+      ...friendIds,
+      ...activeUserIds,
+      // Do NOT exclude users whose requests you've rejected
+      // They should appear in your recommendations again
     ];
+
+    // Debug log to help understand what's happening
+    console.log("Exclude IDs:", {
+      friendsCount: friendIds.length,
+      activeRequestsCount: activeUserIds.length,
+      usersWhoseRequestsIRejected: usersWhoseRequestsIRejected.length,
+      totalExcluded: excludeIds.length,
+    });
 
     const recommendedUsers = await User.find({
       $and: [
@@ -127,14 +153,23 @@ export async function sendFriendRequest(req, res) {
     });
 
     if (rejectedRequest) {
-      // Only allow the original sender to re-send the request
+      console.log("Found rejected request:", {
+        id: rejectedRequest._id,
+        sender: rejectedRequest.sender.toString(),
+        recipient: rejectedRequest.recipient.toString(),
+        status: rejectedRequest.status,
+        currentUser: myId,
+      });
+
+      // If the current user was the original sender, reactivate the request
       if (rejectedRequest.sender.toString() === myId) {
         rejectedRequest.status = "pending";
         await rejectedRequest.save();
         return res.status(201).json(rejectedRequest);
-      } else {
-        // If the original recipient wants to send a request after rejecting one,
-        // delete the old rejected request and create a new one in the opposite direction
+      }
+      // If the current user was the original recipient who rejected the request,
+      // delete the old request and create a new one in the opposite direction
+      else if (rejectedRequest.recipient.toString() === myId) {
         await FriendRequest.findByIdAndDelete(rejectedRequest._id);
         // Continue to create a new request below (fall through to the create code)
       }
