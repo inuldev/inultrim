@@ -7,9 +7,3 @@ export const axiosInstance = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
 });
-
-// Add an interceptor to log requests (for debugging)
-axiosInstance.interceptors.request.use((request) => {
-  console.log("Starting Request:", request.url);
-  return request;
-});
