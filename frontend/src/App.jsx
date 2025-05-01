@@ -1,5 +1,5 @@
 import { Toaster } from "react-hot-toast";
-import { Navigate, Route, Routes } from "react-router";
+import { Navigate, Route, Routes, useLocation } from "react-router";
 
 import HomePage from "./pages/HomePage.jsx";
 import CallPage from "./pages/CallPage.jsx";
@@ -17,6 +17,7 @@ import { useThemeStore } from "./store/useThemeStore.js";
 const App = () => {
   const { isLoading, authUser } = useAuthUser();
   const { theme } = useThemeStore();
+  const location = useLocation();
 
   const isAuthenticated = Boolean(authUser);
   const isOnboarded = authUser?.isOnboarded;
@@ -24,7 +25,14 @@ const App = () => {
   if (isLoading) return <PageLoader />;
 
   return (
-    <div className="h-screen overflow-hidden" data-theme={theme}>
+    <div
+      className={`h-screen ${
+        location.pathname === "/onboarding"
+          ? "overflow-y-auto"
+          : "overflow-hidden"
+      }`}
+      data-theme={theme}
+    >
       <Routes>
         <Route
           path="/"

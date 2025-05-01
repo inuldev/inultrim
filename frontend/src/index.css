@@ -12,8 +12,15 @@ body,
   overflow: hidden;
 }
 
-/* Ensure content scrolls properly within containers */
+/* Allow scrolling on specific pages that need it */
 .overflow-y-auto {
-  overflow-y: auto;
+  overflow-y: auto !important;
   -webkit-overflow-scrolling: touch;
+}
+
+/* Special case for onboarding and other full-page forms */
+.min-h-screen.overflow-y-auto {
+  height: auto;
+  min-height: 100vh;
+  overflow-y: auto !important;
 }
