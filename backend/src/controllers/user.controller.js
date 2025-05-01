@@ -6,13 +6,49 @@ export async function getRecommendedUsers(req, res) {
     const currentUserId = req.user.id;
     const currentUser = req.user;
 
+    // Find all active (pending/accepted) friend requests where the current user is involved
+    const activeRequests = await FriendRequest.find({
+      $or: [
+        { sender: currentUserId, status: { $in: ["pending", "accepted"] } },
+        { recipient: currentUserId, status: { $in: ["pending", "accepted"] } },
+      ],
+    });
+
+    // Find rejected requests where the current user was the sender
+    // (these users have rejected the current user's request, so don't show them)
+    const rejectedAsSenderRequests = await FriendRequest.find({
+      sender: currentUserId,
+      status: "rejected",
+    });
+
+    // Extract the IDs of users involved in active requests and users who rejected current user's request
+    const excludeUserIds = [
+      ...activeRequests.map((request) => {
+        if (request.sender.toString() === currentUserId) {
+          return request.recipient.toString();
+        } else {
+          return request.sender.toString();
+        }
+      }),
+      ...rejectedAsSenderRequests.map((request) =>
+        request.recipient.toString()
+      ),
+    ];
+
+    // Combine all IDs to exclude from recommendations
+    const excludeIds = [
+      ...currentUser.friends.map((id) => id.toString()),
+      ...excludeUserIds,
+    ];
+
     const recommendedUsers = await User.find({
       $and: [
         { _id: { $ne: currentUserId } },
-        { _id: { $nin: currentUser.friends } },
+        { _id: { $nin: excludeIds } },
         { isOnboarded: true },
       ],
     });
+
     res.status(200).json(recommendedUsers);
   } catch (error) {
     console.error("Error in getRecommendedUsers controller", error.message);
@@ -60,18 +96,48 @@ export async function sendFriendRequest(req, res) {
         .json({ message: "You are already friends with this user" });
     }
 
-    // check if a req already exists
-    const existingRequest = await FriendRequest.findOne({
+    // Check if there's an active (pending/accepted) request
+    const activeRequest = await FriendRequest.findOne({
       $or: [
-        { sender: myId, recipient: recipientId },
-        { sender: recipientId, recipient: myId },
+        {
+          sender: myId,
+          recipient: recipientId,
+          status: { $in: ["pending", "accepted"] },
+        },
+        {
+          sender: recipientId,
+          recipient: myId,
+          status: { $in: ["pending", "accepted"] },
+        },
       ],
     });
 
-    if (existingRequest) {
+    if (activeRequest) {
       return res.status(400).json({
         message: "A friend request already exists between you and this user",
       });
+    }
+
+    // Check if there's a rejected request that can be reactivated
+    const rejectedRequest = await FriendRequest.findOne({
+      $or: [
+        { sender: myId, recipient: recipientId, status: "rejected" },
+        { sender: recipientId, recipient: myId, status: "rejected" },
+      ],
+    });
+
+    if (rejectedRequest) {
+      // Only allow the original sender to re-send the request
+      if (rejectedRequest.sender.toString() === myId) {
+        rejectedRequest.status = "pending";
+        await rejectedRequest.save();
+        return res.status(201).json(rejectedRequest);
+      } else {
+        // If the original recipient wants to send a request after rejecting one,
+        // delete the old rejected request and create a new one in the opposite direction
+        await FriendRequest.findByIdAndDelete(rejectedRequest._id);
+        // Continue to create a new request below (fall through to the create code)
+      }
     }
 
     const friendRequest = await FriendRequest.create({
@@ -158,6 +224,34 @@ export async function getOutgoingFriendReqs(req, res) {
     res.status(200).json(outgoingRequests);
   } catch (error) {
     console.log("Error in getOutgoingFriendReqs controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+export async function rejectFriendRequest(req, res) {
+  try {
+    const { id: requestId } = req.params;
+
+    const friendRequest = await FriendRequest.findById(requestId);
+
+    if (!friendRequest) {
+      return res.status(404).json({ message: "Friend request not found" });
+    }
+
+    // Verify the current user is the recipient
+    if (friendRequest.recipient.toString() !== req.user.id) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to reject this request" });
+    }
+
+    // Update the request status to rejected
+    friendRequest.status = "rejected";
+    await friendRequest.save();
+
+    res.status(200).json({ message: "Friend request rejected" });
+  } catch (error) {
+    console.log("Error in rejectFriendRequest controller", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
