@@ -214,23 +214,29 @@ If you encounter issues with Method 1, you can deploy the entire repository:
 4. Add the same Environment Variables as above
 5. Click "Deploy"
 
-**Method 3: Simplified Deployment (Recommended)**
+**Method 3: Simplified Deployment with API Directory (Recommended)**
 
-This method uses Vercel's simplified configuration:
+This method uses Vercel's API directory convention for serverless functions:
 
 1. In Vercel dashboard, click "New Project"
 2. Import your GitHub repository
 3. Configure the project:
    - Root Directory: `backend`
-   - Framework Preset: `Node.js`
+   - Framework Preset: `Other`
    - Build Command: `npm install`
    - Output Directory: `.`
-4. Add the same Environment Variables as above
+4. Add Environment Variables:
+   - `MONGO_URI`: Your MongoDB connection string
+   - `JWT_SECRET_KEY`: Your JWT secret key
+   - `STEAM_API_KEY`: Your Stream API key
+   - `STEAM_API_SECRET`: Your Stream API secret
+   - `FRONTEND_URL`: URL of your deployed frontend (e.g., https://inultrim.vercel.app)
+   - `NODE_ENV`: `production`
 5. Click "Deploy"
 
-The project includes a simplified `vercel.json` that uses rewrites instead of the more complex builds/routes configuration, which should resolve common deployment errors.
+The project includes a minimal `vercel.json` and uses the `api` directory convention, which is the recommended approach for Express.js applications on Vercel.
 
-**Method 4: Using Vercel CLI**
+**Method 4: Using Vercel CLI (Most Reliable)**
 
 If you encounter issues with the dashboard deployment, you can use Vercel CLI:
 
@@ -274,10 +280,11 @@ If you encounter issues with the dashboard deployment, you can use Vercel CLI:
 
 **Important Notes for Vercel Deployment**
 
-- Vercel uses serverless functions, which work differently from traditional Express servers
-- The `api` directory is special in Vercel and is used for serverless functions
-- Avoid mixing old (`routes`) and new (`rewrites`, `headers`) configuration styles in `vercel.json`
-- For cross-domain cookies to work, set `sameSite: "none"` and `secure: true` in your cookie options
+- **API Directory**: The `api` directory is special in Vercel and is used for serverless functions. Each file in this directory becomes a serverless endpoint.
+- **Serverless vs Traditional**: Vercel uses serverless functions, which work differently from traditional Express servers. They are stateless and have cold starts.
+- **Minimal Configuration**: For Express.js applications, it's best to use a minimal `vercel.json` configuration and rely on the `api` directory convention.
+- **Cross-Domain Cookies**: For cross-domain cookies to work, set `sameSite: "none"` and `secure: true` in your cookie options.
+- **Testing Locally**: You can test your Vercel deployment locally using `npm run vercel-dev` in the backend directory.
 
 ### Connecting Frontend and Backend
 
