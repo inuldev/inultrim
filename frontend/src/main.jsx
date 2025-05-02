@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import "./index.css";
 import "stream-chat-react/dist/css/v2/index.css";
+import "./styles/stream-mobile.css";
 
 import App from "./App.jsx";
 

@@ -1,15 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Menu, X, Home, Users, Bell, User, MessageCircle } from "lucide-react";
-
-import { useThemeStore } from "../store/useThemeStore";
-
-import ThemeSelector from "./ThemeSelector";
+import { Menu, X, Home, Users, Bell } from "lucide-react";
 
 const MobileSidebar = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const { theme } = useThemeStore();
 
   // Close sidebar when route changes
   useEffect(() => {
@@ -46,16 +41,6 @@ const MobileSidebar = ({ user }) => {
 
   return (
     <>
-      {/* Toggle Button */}
-      <button
-        className="sidebar-toggle fixed top-4 left-4 z-50 p-2 rounded-full bg-base-200 shadow-md md:hidden"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label={isOpen ? "Close menu" : "Open menu"}
-      >
-        {isOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
-
-      {/* Sidebar */}
       <div
         className={`mobile-sidebar fixed inset-y-0 left-0 z-40 w-64 bg-base-100 shadow-lg transform transition-transform duration-300 ease-in-out md:hidden ${
           isOpen ? "translate-x-0" : "-translate-x-full"
@@ -119,40 +104,8 @@ const MobileSidebar = ({ user }) => {
                   <span>Notifications</span>
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/profile"
-                  className={`flex items-center p-3 space-x-3 rounded-lg hover:bg-base-200 ${
-                    location.pathname === "/profile"
-                      ? "bg-base-200 text-primary"
-                      : ""
-                  }`}
-                >
-                  <User size={20} />
-                  <span>Profile</span>
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/messages"
-                  className={`flex items-center p-3 space-x-3 rounded-lg hover:bg-base-200 ${
-                    location.pathname.startsWith("/chat")
-                      ? "bg-base-200 text-primary"
-                      : ""
-                  }`}
-                >
-                  <MessageCircle size={20} />
-                  <span>Messages</span>
-                </Link>
-              </li>
             </ul>
           </nav>
-
-          {/* Theme Selector */}
-          <div className="p-4 border-t border-base-300">
-            <p className="mb-2 text-sm font-medium">Theme</p>
-            <ThemeSelector currentTheme={theme} />
-          </div>
         </div>
       </div>
 

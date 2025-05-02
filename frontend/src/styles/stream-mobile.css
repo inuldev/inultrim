@@ -1,0 +1,115 @@
+/* Mobile-friendly styles for Stream Chat and Video components */
+
+/* Chat message list */
+@media (max-width: 767px) {
+  /* Make messages take up more width on mobile */
+  .str-chat__message-list {
+    padding: 0.5rem !important;
+  }
+
+  .str-chat__message-simple {
+    margin: 0.25rem 0 !important;
+    max-width: 85% !important;
+  }
+
+  /* Adjust message input for mobile */
+  .str-chat__input {
+    padding: 0.5rem !important;
+    min-height: auto !important;
+  }
+
+  .str-chat__input-flat {
+    min-height: auto !important;
+  }
+
+  .str-chat__textarea {
+    padding: 0.5rem !important;
+    font-size: 0.9rem !important;
+  }
+
+  /* Adjust message actions for mobile */
+  .str-chat__message-actions-box {
+    right: 0 !important;
+  }
+
+  /* Adjust thread for mobile */
+  .str-chat__thread {
+    width: 100% !important;
+    border-radius: 0 !important;
+    border-left: none !important;
+  }
+
+  /* Video call adjustments */
+  .str-video__participant {
+    border-radius: 0.5rem !important;
+  }
+
+  .str-video__call-controls {
+    padding: 0.5rem !important;
+  }
+
+  .str-video__call-controls-button {
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+  }
+
+  /* Adjust participant list for mobile */
+  .str-video__participant-list {
+    width: 100% !important;
+    border-radius: 0 !important;
+  }
+
+  /* Adjust speaker layout for mobile */
+  .str-video__speaker-layout {
+    padding: 0 !important;
+  }
+
+  .str-video__speaker-layout-container {
+    gap: 0.25rem !important;
+  }
+
+  /* Adjust grid layout for mobile */
+  .str-video__grid-layout {
+    padding: 0 !important;
+    gap: 0.25rem !important;
+  }
+}
+
+/* Custom styles for our mobile components */
+.mobile-chat-header {
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  background-color: var(--b2);
+  border-bottom: 1px solid var(--b3);
+}
+
+.mobile-chat-input-container {
+  padding: 0.5rem;
+  background-color: var(--b2);
+  border-top: 1px solid var(--b3);
+}
+
+.mobile-call-controls {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.75rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  z-index: 100;
+}
+
+.mobile-call-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 0.75rem;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 100;
+}

@@ -11,13 +11,19 @@ import {
   StreamTheme,
   CallingState,
   useCallStateHooks,
+  PaginatedGridLayout,
+  DeviceSettings,
+  CallParticipantsList,
 } from "@stream-io/video-react-sdk";
+import { ArrowLeft, Settings, Users } from "lucide-react";
 
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 
 import { getStreamToken } from "../lib/api";
 import useAuthUser from "../hooks/useAuthUser";
 import PageLoader from "../components/PageLoader";
+import MobileCallControls from "../components/MobileCallControls";
+import MobileCallHeader from "../components/MobileCallHeader";
 
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
@@ -97,16 +103,43 @@ const CallPage = () => {
 const CallContent = () => {
   const { useCallCallingState } = useCallStateHooks();
   const callingState = useCallCallingState();
-
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [layoutType, setLayoutType] = useState("speaker"); // 'speaker' or 'grid'
   const navigate = useNavigate();
+
+  // Check if device is mobile
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   if (callingState === CallingState.LEFT) return navigate("/");
 
-  return (
-    <StreamTheme>
+  // Mobile-optimized call UI
+  const MobileCallUI = () => (
+    <div className="relative h-full">
+      <MobileCallHeader />
+
+      {layoutType === "speaker" ? <SpeakerLayout /> : <PaginatedGridLayout />}
+
+      <MobileCallControls />
+    </div>
+  );
+
+  // Desktop call UI
+  const DesktopCallUI = () => (
+    <>
       <SpeakerLayout />
       <CallControls />
-    </StreamTheme>
+    </>
+  );
+
+  return (
+    <StreamTheme>{isMobile ? <MobileCallUI /> : <DesktopCallUI />}</StreamTheme>
   );
 };
 

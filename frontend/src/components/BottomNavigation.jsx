@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Users, Bell, User, MessageCircle } from "lucide-react";
+import { Home, Users, Bell } from "lucide-react";
 
 const BottomNavigation = () => {
   const location = useLocation();
@@ -28,17 +28,6 @@ const BottomNavigation = () => {
           <span className="text-xs mt-1">Friends</span>
         </Link>
         <Link
-          to="/messages"
-          className={`flex flex-col items-center justify-center py-2 flex-1 ${
-            location.pathname.startsWith("/chat")
-              ? "text-primary"
-              : "text-base-content"
-          }`}
-        >
-          <MessageCircle size={20} />
-          <span className="text-xs mt-1">Messages</span>
-        </Link>
-        <Link
           to="/notifications"
           className={`flex flex-col items-center justify-center py-2 flex-1 ${
             location.pathname === "/notifications"
@@ -48,17 +37,6 @@ const BottomNavigation = () => {
         >
           <Bell size={20} />
           <span className="text-xs mt-1">Alerts</span>
-        </Link>
-        <Link
-          to="/profile"
-          className={`flex flex-col items-center justify-center py-2 flex-1 ${
-            location.pathname === "/profile"
-              ? "text-primary"
-              : "text-base-content"
-          }`}
-        >
-          <User size={20} />
-          <span className="text-xs mt-1">Profile</span>
         </Link>
       </div>
     </nav>

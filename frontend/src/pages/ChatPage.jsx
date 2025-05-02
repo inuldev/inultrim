@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { StreamChat } from "stream-chat";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   Channel,
@@ -11,12 +11,17 @@ import {
   MessageList,
   Thread,
   Window,
+  useChannelStateContext,
+  useChatContext,
 } from "stream-chat-react";
+import { ArrowLeft, X, Maximize, Minimize, Video } from "lucide-react";
 
 import { getStreamToken } from "../lib/api";
 import useAuthUser from "../hooks/useAuthUser";
 import ChatLoader from "../components/ChatLoader";
 import CallButton from "../components/CallButton";
+import MobileChatHeader from "../components/MobileChatHeader";
+import MobileChatInput from "../components/MobileChatInput";
 
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
@@ -91,20 +96,56 @@ const ChatPage = () => {
     }
   };
 
+  const navigate = useNavigate();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isThreadOpen, setIsThreadOpen] = useState(false);
+
+  // Check if device is mobile
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   if (loading || !chatClient || !channel) return <ChatLoader />;
+
+  // Custom components for mobile view
+  const CustomMobileChat = () => {
+    return (
+      <div className="flex flex-col h-full">
+        {/* Import and use the MobileChatHeader component */}
+        <MobileChatHeader handleVideoCall={handleVideoCall} />
+
+        {/* Message list takes most of the space */}
+        <div className="flex-1 overflow-y-auto bg-base-100">
+          <MessageList />
+        </div>
+
+        {/* Import and use the MobileChatInput component */}
+        <MobileChatInput />
+      </div>
+    );
+  };
 
   return (
     <div className="h-[93vh]">
       <Chat client={chatClient}>
         <Channel channel={channel}>
-          <div className="w-full relative">
-            <CallButton handleVideoCall={handleVideoCall} />
-            <Window>
-              <ChannelHeader />
-              <MessageList />
-              <MessageInput focus />
-            </Window>
-          </div>
+          {isMobile ? (
+            <CustomMobileChat />
+          ) : (
+            <div className="w-full relative">
+              <CallButton handleVideoCall={handleVideoCall} />
+              <Window>
+                <ChannelHeader />
+                <MessageList />
+                <MessageInput focus />
+              </Window>
+            </div>
+          )}
           <Thread />
         </Channel>
       </Chat>
