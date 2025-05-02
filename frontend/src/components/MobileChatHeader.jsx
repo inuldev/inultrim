@@ -50,7 +50,7 @@ const MobileChatHeader = ({ handleVideoCall }) => {
         >
           <ArrowLeft size={20} />
         </button>
-        
+
         {otherUser && (
           <div className="flex items-center">
             <div className="avatar">
@@ -77,7 +77,7 @@ const MobileChatHeader = ({ handleVideoCall }) => {
         >
           <Video size={20} />
         </button>
-        
+
         <button
           onClick={toggleMenu}
           className="btn btn-ghost btn-sm btn-circle"
@@ -88,7 +88,7 @@ const MobileChatHeader = ({ handleVideoCall }) => {
       </div>
 
       {isMenuOpen && (
-        <div className="absolute right-2 top-14 bg-base-100 shadow-lg rounded-lg p-2 z-50">
+        <div className="absolute right-2 top-14 bg-base-100 shadow-lg rounded-lg p-2 z-100">
           <ul className="menu menu-sm w-40">
             <li>
               <button onClick={handleVideoCall} className="flex items-center">

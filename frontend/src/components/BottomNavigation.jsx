@@ -1,10 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { Home, Users, Bell, MessageCircle, User, Settings } from "lucide-react";
-import useAuthUser from "../hooks/useAuthUser";
 
 const BottomNavigation = () => {
   const location = useLocation();
-  const { authUser } = useAuthUser();
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 bg-base-100 border-t border-base-300 md:hidden h-16 shadow-lg">

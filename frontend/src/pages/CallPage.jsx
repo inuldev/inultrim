@@ -82,20 +82,18 @@ const CallPage = () => {
   if (isLoading || isConnecting) return <PageLoader />;
 
   return (
-    <div className="h-screen flex flex-col items-center justify-center">
-      <div className="relative">
-        {client && call ? (
-          <StreamVideo client={client}>
-            <StreamCall call={call}>
-              <CallContent />
-            </StreamCall>
-          </StreamVideo>
-        ) : (
-          <div className="flex items-center justify-center h-full">
-            <p>Could not initialize call. Please refresh or try again later.</p>
-          </div>
-        )}
-      </div>
+    <div className="h-screen w-full overflow-hidden">
+      {client && call ? (
+        <StreamVideo client={client}>
+          <StreamCall call={call}>
+            <CallContent />
+          </StreamCall>
+        </StreamVideo>
+      ) : (
+        <div className="flex items-center justify-center h-full">
+          <p>Could not initialize call. Please refresh or try again later.</p>
+        </div>
+      )}
     </div>
   );
 };
@@ -104,7 +102,7 @@ const CallContent = () => {
   const { useCallCallingState } = useCallStateHooks();
   const callingState = useCallCallingState();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [layoutType, setLayoutType] = useState("speaker"); // 'speaker' or 'grid'
+  const [layoutType, setLayoutType] = useState("speaker");
   const navigate = useNavigate();
 
   // Check if device is mobile
@@ -119,14 +117,27 @@ const CallContent = () => {
 
   if (callingState === CallingState.LEFT) return navigate("/");
 
+  // Toggle between speaker and grid layout
+  const toggleLayout = () => {
+    setLayoutType(layoutType === "speaker" ? "grid" : "speaker");
+  };
+
   // Mobile-optimized call UI
   const MobileCallUI = () => (
-    <div className="relative h-full">
+    <div className="relative h-full w-full overflow-hidden">
       <MobileCallHeader />
 
-      {layoutType === "speaker" ? <SpeakerLayout /> : <PaginatedGridLayout />}
+      <div
+        className="h-full w-full"
+        style={{ paddingTop: "60px", paddingBottom: "70px" }}
+      >
+        {layoutType === "speaker" ? <SpeakerLayout /> : <PaginatedGridLayout />}
+      </div>
 
-      <MobileCallControls />
+      <MobileCallControls
+        layoutType={layoutType}
+        onToggleLayout={toggleLayout}
+      />
     </div>
   );
 

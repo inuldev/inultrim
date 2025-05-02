@@ -5,7 +5,7 @@ import { useCallStateHooks } from "@stream-io/video-react-sdk";
 
 const MobileCallHeader = () => {
   const navigate = useNavigate();
-  const { useCallCustomData, useCallParticipants } = useCallStateHooks();
+  const { useCallParticipants } = useCallStateHooks();
   const { participants } = useCallParticipants();
   const [callDuration, setCallDuration] = useState(0);
   const [callTitle, setCallTitle] = useState("Video Call");
@@ -14,7 +14,9 @@ const MobileCallHeader = () => {
   const formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   // Call timer
@@ -33,7 +35,7 @@ const MobileCallHeader = () => {
       const otherParticipants = participants.filter(
         (p) => !p.isLocalParticipant
       );
-      
+
       if (otherParticipants.length === 1) {
         // One-on-one call
         setCallTitle(otherParticipants[0].name || "Video Call");
@@ -45,7 +47,7 @@ const MobileCallHeader = () => {
   }, [participants]);
 
   return (
-    <div className="fixed top-0 left-0 right-0 bg-base-300 bg-opacity-90 p-3 z-50 flex items-center justify-between">
+    <div className="fixed top-0 left-0 right-0 bg-base-300 bg-opacity-90 p-3 z-100 flex items-center justify-between shadow-md">
       <div className="flex items-center">
         <button
           onClick={() => navigate(-1)}
@@ -62,8 +64,8 @@ const MobileCallHeader = () => {
           </div>
         </div>
       </div>
-      
-      <div className="badge badge-primary">Live</div>
+
+      <div className="badge badge-primary badge-lg">Live</div>
     </div>
   );
 };

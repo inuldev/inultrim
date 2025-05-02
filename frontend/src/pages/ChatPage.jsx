@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
-import { useParams, useNavigate } from "react-router-dom";
 import { StreamChat } from "stream-chat";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
   Channel,
@@ -11,10 +11,7 @@ import {
   MessageList,
   Thread,
   Window,
-  useChannelStateContext,
-  useChatContext,
 } from "stream-chat-react";
-import { ArrowLeft, X, Maximize, Minimize, Video } from "lucide-react";
 
 import { getStreamToken } from "../lib/api";
 import useAuthUser from "../hooks/useAuthUser";
@@ -96,9 +93,7 @@ const ChatPage = () => {
     }
   };
 
-  const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [isThreadOpen, setIsThreadOpen] = useState(false);
 
   // Check if device is mobile
   useEffect(() => {
@@ -115,23 +110,31 @@ const ChatPage = () => {
   // Custom components for mobile view
   const CustomMobileChat = () => {
     return (
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-full w-full">
         {/* Import and use the MobileChatHeader component */}
         <MobileChatHeader handleVideoCall={handleVideoCall} />
 
         {/* Message list takes most of the space */}
-        <div className="flex-1 overflow-y-auto bg-base-100">
+        <div
+          className="flex-1 overflow-y-auto bg-base-100 w-full"
+          style={{ height: "calc(100% - 120px)" }}
+        >
           <MessageList />
         </div>
 
         {/* Import and use the MobileChatInput component */}
-        <MobileChatInput />
+        <div
+          className="w-full"
+          style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}
+        >
+          <MobileChatInput />
+        </div>
       </div>
     );
   };
 
   return (
-    <div className="h-[93vh]">
+    <div className="h-[93vh] w-full">
       <Chat client={chatClient}>
         <Channel channel={channel}>
           {isMobile ? (
@@ -146,7 +149,8 @@ const ChatPage = () => {
               </Window>
             </div>
           )}
-          <Thread />
+          {/* Only show Thread on desktop */}
+          {!isMobile && <Thread />}
         </Channel>
       </Chat>
     </div>

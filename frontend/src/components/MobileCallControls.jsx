@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  useCallStateHooks,
-  useCalls,
-} from "@stream-io/video-react-sdk";
+import { useCallStateHooks, useCalls } from "@stream-io/video-react-sdk";
 import {
   Mic,
   MicOff,
@@ -15,12 +12,14 @@ import {
   Users,
   Settings,
   MessageSquare,
+  Grid,
+  UserPlus,
 } from "lucide-react";
 
-const MobileCallControls = () => {
+const MobileCallControls = ({ layoutType, onToggleLayout }) => {
   const navigate = useNavigate();
   const [showMenu, setShowMenu] = useState(false);
-  const { useCallCustomData, useCallVideoState, useCallAudioState } = useCallStateHooks();
+  const { useCallVideoState, useCallAudioState } = useCallStateHooks();
   const { activeCalls } = useCalls();
   const activeCall = activeCalls[0];
 
@@ -43,7 +42,7 @@ const MobileCallControls = () => {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-base-300 bg-opacity-90 p-3 z-50">
+    <div className="fixed bottom-0 left-0 right-0 bg-base-300 bg-opacity-90 p-3 z-100">
       <div className="flex justify-center items-center space-x-4">
         {/* Microphone toggle */}
         <button
@@ -51,9 +50,12 @@ const MobileCallControls = () => {
           className={`btn btn-circle ${
             isMicrophoneEnabled ? "btn-primary" : "btn-error"
           }`}
-          aria-label={isMicrophoneEnabled ? "Mute microphone" : "Unmute microphone"}
+          aria-label={
+            isMicrophoneEnabled ? "Mute microphone" : "Unmute microphone"
+          }
+          style={{ width: "50px", height: "50px" }}
         >
-          {isMicrophoneEnabled ? <Mic size={20} /> : <MicOff size={20} />}
+          {isMicrophoneEnabled ? <Mic size={24} /> : <MicOff size={24} />}
         </button>
 
         {/* Camera toggle */}
@@ -63,8 +65,9 @@ const MobileCallControls = () => {
             isCameraEnabled ? "btn-primary" : "btn-error"
           }`}
           aria-label={isCameraEnabled ? "Turn off camera" : "Turn on camera"}
+          style={{ width: "50px", height: "50px" }}
         >
-          {isCameraEnabled ? <Video size={20} /> : <VideoOff size={20} />}
+          {isCameraEnabled ? <Video size={24} /> : <VideoOff size={24} />}
         </button>
 
         {/* End call */}
@@ -72,8 +75,9 @@ const MobileCallControls = () => {
           onClick={handleEndCall}
           className="btn btn-circle btn-error"
           aria-label="End call"
+          style={{ width: "50px", height: "50px" }}
         >
-          <PhoneOff size={20} />
+          <PhoneOff size={24} />
         </button>
 
         {/* More options */}
@@ -81,8 +85,9 @@ const MobileCallControls = () => {
           onClick={toggleMenu}
           className="btn btn-circle"
           aria-label="More options"
+          style={{ width: "50px", height: "50px" }}
         >
-          <MoreVertical size={20} />
+          <MoreVertical size={24} />
         </button>
       </div>
 
@@ -90,6 +95,15 @@ const MobileCallControls = () => {
       {showMenu && (
         <div className="absolute bottom-20 left-0 right-0 bg-base-200 rounded-t-lg p-4 shadow-lg">
           <div className="grid grid-cols-3 gap-4">
+            <button
+              className="flex flex-col items-center justify-center p-2"
+              onClick={() => onToggleLayout()}
+            >
+              <Grid size={24} className="mb-1" />
+              <span className="text-xs">
+                {layoutType === "speaker" ? "Grid View" : "Speaker View"}
+              </span>
+            </button>
             <button className="flex flex-col items-center justify-center p-2">
               <Camera size={24} className="mb-1" />
               <span className="text-xs">Switch Camera</span>
@@ -106,8 +120,12 @@ const MobileCallControls = () => {
               <MessageSquare size={24} className="mb-1" />
               <span className="text-xs">Chat</span>
             </button>
+            <button className="flex flex-col items-center justify-center p-2">
+              <UserPlus size={24} className="mb-1" />
+              <span className="text-xs">Invite</span>
+            </button>
           </div>
-          <button 
+          <button
             className="btn btn-sm btn-ghost w-full mt-4"
             onClick={toggleMenu}
           >

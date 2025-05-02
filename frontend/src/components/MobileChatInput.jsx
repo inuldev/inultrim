@@ -1,13 +1,17 @@
 import { useState, useRef } from "react";
-import { useChannelStateContext, useMessageInputContext } from "stream-chat-react";
+import {
+  useChannelStateContext,
+  useMessageInputContext,
+} from "stream-chat-react";
 import { Send, Paperclip, Smile, Image, Mic } from "lucide-react";
 
 const MobileChatInput = () => {
   const [text, setText] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
   const inputRef = useRef(null);
-  
-  const { channel } = useChannelStateContext();
+
+  // We're using the channel context but not directly accessing the channel object
+  useChannelStateContext();
   const messageInput = useMessageInputContext();
 
   const handleChange = (e) => {
@@ -34,7 +38,7 @@ const MobileChatInput = () => {
   };
 
   return (
-    <div className="bg-base-200 border-t border-base-300 p-2 sticky bottom-0 w-full">
+    <div className="bg-base-200 border-t border-base-300 p-2 w-full z-10">
       <form onSubmit={handleSubmit} className="flex items-end">
         <div className="flex-1 relative">
           <textarea
@@ -45,42 +49,37 @@ const MobileChatInput = () => {
             onChange={handleChange}
             onFocus={handleFocus}
             rows={isExpanded ? 3 : 1}
+            style={{ minHeight: isExpanded ? "80px" : "40px" }}
           />
-          
+
           {isExpanded && (
-            <div className="absolute bottom-full left-0 right-0 bg-base-200 p-2 border-t border-base-300 flex justify-around">
-              <button 
-                type="button" 
+            <div className="absolute bottom-full left-0 right-0 bg-base-200 p-2 border-t border-base-300 flex justify-around z-100">
+              <button
+                type="button"
                 className="btn btn-ghost btn-circle btn-sm"
                 onClick={handleAttachment}
               >
                 <Image size={20} />
               </button>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="btn btn-ghost btn-circle btn-sm"
                 onClick={handleAttachment}
               >
                 <Paperclip size={20} />
               </button>
-              <button 
-                type="button" 
-                className="btn btn-ghost btn-circle btn-sm"
-              >
+              <button type="button" className="btn btn-ghost btn-circle btn-sm">
                 <Smile size={20} />
               </button>
-              <button 
-                type="button" 
-                className="btn btn-ghost btn-circle btn-sm"
-              >
+              <button type="button" className="btn btn-ghost btn-circle btn-sm">
                 <Mic size={20} />
               </button>
             </div>
           )}
         </div>
-        
-        <button 
-          type="submit" 
+
+        <button
+          type="submit"
           className="btn btn-circle btn-primary ml-2"
           disabled={!text.trim()}
         >
