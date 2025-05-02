@@ -12,13 +12,13 @@ export async function getRecommendedUsers(req, res) {
     });
 
     // Log all requests for debugging
-    console.log("All user requests:", {
-      total: allUserRequests.length,
-      byStatus: allUserRequests.reduce((acc, req) => {
-        acc[req.status] = (acc[req.status] || 0) + 1;
-        return acc;
-      }, {}),
-    });
+    // console.log("All user requests:", {
+    //   total: allUserRequests.length,
+    //   byStatus: allUserRequests.reduce((acc, req) => {
+    //     acc[req.status] = (acc[req.status] || 0) + 1;
+    //     return acc;
+    //   }, {}),
+    // });
 
     // Filter to only get active (pending/accepted) requests
     const activeRequests = allUserRequests.filter(
@@ -34,10 +34,10 @@ export async function getRecommendedUsers(req, res) {
       )
       .map((req) => req.sender.toString());
 
-    console.log(
-      "Users whose requests I rejected:",
-      usersWhoseRequestsIRejected
-    );
+    // console.log(
+    //   "Users whose requests I rejected:",
+    //   usersWhoseRequestsIRejected
+    // );
 
     // Extract IDs of users who are already friends with the current user
     const friendIds = currentUser.friends.map((id) => id.toString());
@@ -57,6 +57,7 @@ export async function getRecommendedUsers(req, res) {
       ...activeUserIds,
       // Do NOT exclude users whose requests you've rejected
       // They should appear in your recommendations again
+      ...usersWhoseRequestsIRejected, // Exclude users whose requests you've rejected
     ];
 
     // Debug log to help understand what's happening
@@ -153,13 +154,13 @@ export async function sendFriendRequest(req, res) {
     });
 
     if (rejectedRequest) {
-      console.log("Found rejected request:", {
-        id: rejectedRequest._id,
-        sender: rejectedRequest.sender.toString(),
-        recipient: rejectedRequest.recipient.toString(),
-        status: rejectedRequest.status,
-        currentUser: myId,
-      });
+      // console.log("Found rejected request:", {
+      //   id: rejectedRequest._id,
+      //   sender: rejectedRequest.sender.toString(),
+      //   recipient: rejectedRequest.recipient.toString(),
+      //   status: rejectedRequest.status,
+      //   currentUser: myId,
+      // });
 
       // If the current user was the original sender, reactivate the request
       if (rejectedRequest.sender.toString() === myId) {
