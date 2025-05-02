@@ -156,6 +156,55 @@ npm run dev
 - Added loading indicators for async operations
 - Improved responsive design for all screen sizes
 
+## 🚀 Deployment Guide
+
+### Deploying to Vercel
+
+This application is configured for easy deployment to Vercel. Both the frontend and backend can be deployed separately.
+
+#### Frontend Deployment
+
+1. Fork or clone this repository to your GitHub account
+2. Sign up for a Vercel account at https://vercel.com
+3. Click "New Project" in Vercel dashboard
+4. Import your GitHub repository
+5. Configure the project:
+   - Root Directory: `frontend`
+   - Framework Preset: `Vite`
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+6. Add Environment Variables:
+   - `VITE_STREAM_API_KEY`: Your Stream API key
+   - `VITE_BACKEND_URL`: URL of your deployed backend (e.g., https://inultrim-api.vercel.app/api)
+7. Click "Deploy"
+
+#### Backend Deployment
+
+1. In Vercel dashboard, click "New Project"
+2. Import the same GitHub repository
+3. Configure the project:
+   - Root Directory: `backend`
+   - Framework Preset: `Other`
+   - Build Command: `npm install`
+   - Output Directory: `public`
+4. Add Environment Variables:
+   - `MONGO_URI`: Your MongoDB connection string
+   - `JWT_SECRET_KEY`: Your JWT secret key
+   - `STEAM_API_KEY`: Your Stream API key
+   - `STEAM_API_SECRET`: Your Stream API secret
+   - `FRONTEND_URL`: URL of your deployed frontend (e.g., https://inultrim.vercel.app)
+   - `NODE_ENV`: `production`
+   - `COOKIE_DOMAIN`: Optional, for cross-domain cookies (e.g., vercel.app)
+5. Click "Deploy"
+
+### Connecting Frontend and Backend
+
+After deployment, make sure to:
+
+1. Update the frontend's `VITE_BACKEND_URL` to point to your deployed backend
+2. Update the backend's `FRONTEND_URL` to point to your deployed frontend
+3. Test the application to ensure everything works correctly
+
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
