@@ -11,19 +11,13 @@ import {
   StreamTheme,
   CallingState,
   useCallStateHooks,
-  PaginatedGridLayout,
-  DeviceSettings,
-  CallParticipantsList,
 } from "@stream-io/video-react-sdk";
-import { ArrowLeft, Settings, Users } from "lucide-react";
 
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 
 import { getStreamToken } from "../lib/api";
 import useAuthUser from "../hooks/useAuthUser";
 import PageLoader from "../components/PageLoader";
-import MobileCallControls from "../components/MobileCallControls";
-import MobileCallHeader from "../components/MobileCallHeader";
 
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
@@ -82,18 +76,20 @@ const CallPage = () => {
   if (isLoading || isConnecting) return <PageLoader />;
 
   return (
-    <div className="h-screen w-full overflow-hidden">
-      {client && call ? (
-        <StreamVideo client={client}>
-          <StreamCall call={call}>
-            <CallContent />
-          </StreamCall>
-        </StreamVideo>
-      ) : (
-        <div className="flex items-center justify-center h-full">
-          <p>Could not initialize call. Please refresh or try again later.</p>
-        </div>
-      )}
+    <div className="h-screen flex flex-col items-center justify-center">
+      <div className="relative">
+        {client && call ? (
+          <StreamVideo client={client}>
+            <StreamCall call={call}>
+              <CallContent />
+            </StreamCall>
+          </StreamVideo>
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <p>Could not initialize call. Please refresh or try again later.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -101,56 +97,15 @@ const CallPage = () => {
 const CallContent = () => {
   const { useCallCallingState } = useCallStateHooks();
   const callingState = useCallCallingState();
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
-  const [layoutType, setLayoutType] = useState("speaker");
   const navigate = useNavigate();
-
-  // Check if device is mobile
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   if (callingState === CallingState.LEFT) return navigate("/");
 
-  // Toggle between speaker and grid layout
-  const toggleLayout = () => {
-    setLayoutType(layoutType === "speaker" ? "grid" : "speaker");
-  };
-
-  // Mobile-optimized call UI
-  const MobileCallUI = () => (
-    <div className="relative h-full w-full overflow-hidden">
-      <MobileCallHeader />
-
-      <div
-        className="h-full w-full"
-        style={{ paddingTop: "60px", paddingBottom: "70px" }}
-      >
-        {layoutType === "speaker" ? <SpeakerLayout /> : <PaginatedGridLayout />}
-      </div>
-
-      <MobileCallControls
-        layoutType={layoutType}
-        onToggleLayout={toggleLayout}
-      />
-    </div>
-  );
-
-  // Desktop call UI
-  const DesktopCallUI = () => (
-    <>
+  return (
+    <StreamTheme>
       <SpeakerLayout />
       <CallControls />
-    </>
-  );
-
-  return (
-    <StreamTheme>{isMobile ? <MobileCallUI /> : <DesktopCallUI />}</StreamTheme>
+    </StreamTheme>
   );
 };
 
