@@ -230,6 +230,55 @@ This method uses Vercel's simplified configuration:
 
 The project includes a simplified `vercel.json` that uses rewrites instead of the more complex builds/routes configuration, which should resolve common deployment errors.
 
+**Method 4: Using Vercel CLI**
+
+If you encounter issues with the dashboard deployment, you can use Vercel CLI:
+
+1. Install Vercel CLI:
+
+   ```bash
+   npm install -g vercel
+   ```
+
+2. Login to Vercel:
+
+   ```bash
+   vercel login
+   ```
+
+3. Deploy Backend:
+
+   ```bash
+   cd backend
+   vercel
+   ```
+
+   - When prompted, select "No" for using project settings
+   - Set the build command to `npm install`
+   - Set the output directory to `.`
+   - Confirm the deployment
+
+4. Deploy Frontend:
+
+   ```bash
+   cd frontend
+   vercel
+   ```
+
+   - Follow the same prompts as for the backend
+
+5. Set Environment Variables:
+   - After deployment, go to the Vercel dashboard
+   - Navigate to your project settings
+   - Add the required environment variables
+
+**Important Notes for Vercel Deployment**
+
+- Vercel uses serverless functions, which work differently from traditional Express servers
+- The `api` directory is special in Vercel and is used for serverless functions
+- Avoid mixing old (`routes`) and new (`rewrites`, `headers`) configuration styles in `vercel.json`
+- For cross-domain cookies to work, set `sameSite: "none"` and `secure: true` in your cookie options
+
 ### Connecting Frontend and Backend
 
 After deployment, make sure to:
