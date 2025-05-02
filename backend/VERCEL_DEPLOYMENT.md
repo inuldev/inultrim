@@ -33,26 +33,31 @@ This guide provides step-by-step instructions for deploying the backend API to V
 ### Method 2: Deploy via Vercel CLI (Recommended for Troubleshooting)
 
 1. Install Vercel CLI:
+
    ```bash
    npm install -g vercel
    ```
 
 2. Login to Vercel:
+
    ```bash
    vercel login
    ```
 
 3. Navigate to the backend directory:
+
    ```bash
    cd backend
    ```
 
 4. Deploy to Vercel:
+
    ```bash
    vercel
    ```
 
 5. When prompted:
+
    - Set up and deploy: `Y`
    - Which scope: Select your account
    - Link to existing project: `N` (if first time)
@@ -65,6 +70,7 @@ This guide provides step-by-step instructions for deploying the backend API to V
    - Want to override the settings: `Y`
 
 6. After deployment, set environment variables:
+
    ```bash
    vercel env add MONGO_URI
    vercel env add JWT_SECRET_KEY
@@ -86,26 +92,29 @@ This guide provides step-by-step instructions for deploying the backend API to V
 If you're getting 404 errors after deployment:
 
 1. Check that your `vercel.json` file is correctly configured:
+
    ```json
    {
      "version": 2,
      "public": true,
-     "functions": {
-       "api/index.js": {
-         "memory": 1024,
-         "maxDuration": 10
-       }
-     },
-     "routes": [
-       { "src": "/(.*)", "dest": "/api/index.js" }
-     ]
+     "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
    }
    ```
 
-2. Verify that your `api/index.js` file is exporting the Express app correctly:
+2. Verify that your `api/index.js` file is using the proper serverless function handler:
+
    ```javascript
-   export default app;
-   
+   // Serverless function handler for Vercel
+   import "dotenv/config";
+   import app from "../src/server.js";
+
+   // Export the Express app as a serverless function
+   export default function handler(req, res) {
+     // Pass the request to the Express app
+     return app(req, res);
+   }
+
+   // Configure the serverless function
    export const config = {
      api: {
        bodyParser: false,
@@ -113,7 +122,13 @@ If you're getting 404 errors after deployment:
    };
    ```
 
-3. Check Vercel deployment logs for any errors:
+3. If your API is showing the source code instead of executing it, make sure:
+
+   - You're using the proper serverless function handler format (as shown above)
+   - Your vercel.json is using rewrites instead of routes
+   - You've deployed the backend directory, not the entire repository
+
+4. Check Vercel deployment logs for any errors:
    ```bash
    vercel logs inultrim-api.vercel.app
    ```
