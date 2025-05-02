@@ -160,9 +160,9 @@ npm run dev
 
 ### Deploying to Vercel
 
-This application is configured for easy deployment to Vercel. Both the frontend and backend can be deployed separately.
+This application is configured for easy deployment to Vercel. Both the frontend and backend need to be deployed separately.
 
-> **Note**: For detailed backend deployment instructions, see the [VERCEL_DEPLOYMENT.md](backend/VERCEL_DEPLOYMENT.md) file in the backend directory. This contains updated instructions and troubleshooting tips.
+> **Note**: For detailed backend deployment instructions and troubleshooting, see the [VERCEL_DEPLOYMENT.md](backend/VERCEL_DEPLOYMENT.md) file in the backend directory.
 
 #### Frontend Deployment
 
@@ -180,21 +180,133 @@ This application is configured for easy deployment to Vercel. Both the frontend 
    - `VITE_BACKEND_URL`: URL of your deployed backend (e.g., https://inultrim-api.vercel.app/api)
 7. Click "Deploy"
 
+#### Backend Deployment (Recommended Method)
+
+1. In Vercel dashboard, click "New Project"
+2. Import your GitHub repository
+3. Configure the project:
+   - Root Directory: `backend`
+   - Framework Preset: `Other`
+   - Build Command: `npm install`
+   - Output Directory: `.`
+4. Add Environment Variables:
+   - `MONGO_URI`: Your MongoDB connection string
+   - `JWT_SECRET_KEY`: Your JWT secret key
+   - `STREAM_API_KEY`: Your Stream API key
+   - `STREAM_API_SECRET`: Your Stream API secret
+   - `FRONTEND_URL`: URL of your deployed frontend (e.g., https://inultrim.vercel.app)
+   - `NODE_ENV`: `production`
+5. Click "Deploy"
+
+#### Vercel Configuration Files
+
+The project includes the necessary configuration files for Vercel deployment:
+
+1. **Backend Configuration** (`backend/vercel.json`):
+
+   ```json
+   {
+     "version": 2,
+     "public": true,
+     "rewrites": [{ "source": "/(.*)", "destination": "/api" }]
+   }
+   ```
+
+2. **API Handlers** (`backend/api/*.js`):
+   Each API file uses the serverless function handler pattern:
+
+   ```javascript
+   // Serverless function handler for Vercel
+   import app from "../src/server.js";
+
+   export default function handler(req, res) {
+     return app(req, res);
+   }
+   ```
+
 **Important Notes for Vercel Deployment**
 
-- **API Directory**: The `api` directory is special in Vercel and is used for serverless functions. Each file in this directory becomes a serverless endpoint.
-- **Serverless vs Traditional**: Vercel uses serverless functions, which work differently from traditional Express servers. They are stateless and have cold starts.
-- **Minimal Configuration**: For Express.js applications, it's best to use a minimal `vercel.json` configuration and rely on the `api` directory convention.
+- **API Directory Structure**: The `api` directory is special in Vercel and is used for serverless functions. Each file in this directory becomes a serverless endpoint.
+- **Serverless Function Format**: Always use the handler function format for API files to ensure they execute properly.
+- **Vercel Configuration**: Use `rewrites` in vercel.json instead of `routes` for better compatibility.
+- **Environment Variables**: All environment variables must be set in the Vercel dashboard.
 - **Cross-Domain Cookies**: For cross-domain cookies to work, set `sameSite: "none"` and `secure: true` in your cookie options.
-- **Testing Locally**: You can test your Vercel deployment locally using `npm run vercel-dev` in the backend directory.
+- **Cold Starts**: Serverless functions have cold starts, which may cause the first request to be slower.
+- **Testing Locally**: You can test your Vercel deployment locally using `vercel dev` in the backend directory.
 
 ### Connecting Frontend and Backend
 
-After deployment, make sure to:
+After deploying both the frontend and backend, you need to connect them:
 
-1. Update the frontend's `VITE_BACKEND_URL` to point to your deployed backend
-2. Update the backend's `FRONTEND_URL` to point to your deployed frontend
-3. Test the application to ensure everything works correctly
+1. **Update Frontend Environment Variables**:
+
+   - Go to your frontend project in the Vercel dashboard
+   - Navigate to "Settings" > "Environment Variables"
+   - Set `VITE_BACKEND_URL` to your backend URL (e.g., `https://inultrim-api.vercel.app/api`)
+   - Click "Save" and redeploy if necessary
+
+2. **Update Backend Environment Variables**:
+
+   - Go to your backend project in the Vercel dashboard
+   - Navigate to "Settings" > "Environment Variables"
+   - Set `FRONTEND_URL` to your frontend URL (e.g., `https://inultrim.vercel.app`)
+   - Click "Save" and redeploy if necessary
+
+3. **Test the Connection**:
+
+   - Visit your frontend application
+   - Try to log in or register
+   - Check the browser console for any CORS errors
+   - Verify that API requests are being made to the correct URL
+
+4. **Troubleshooting Connection Issues**:
+   - Check CORS configuration in the backend
+   - Verify that cookies are being set correctly
+   - Ensure all environment variables are properly set
+   - Check Vercel logs for any errors
+
+### Troubleshooting Vercel Deployment
+
+If you encounter issues with your Vercel deployment, here are some common problems and solutions:
+
+#### 1. API Returns 404 Not Found
+
+- Verify that your `vercel.json` file is correctly configured with rewrites
+- Check that your API files are using the proper serverless function handler format
+- Make sure you've deployed the correct directory (backend)
+- Check Vercel logs for any errors during deployment
+
+#### 2. API Shows Source Code Instead of Executing
+
+- Make sure your API files are using the proper serverless function handler format:
+  ```javascript
+  export default function handler(req, res) {
+    return app(req, res);
+  }
+  ```
+- Verify that your `vercel.json` is using rewrites instead of routes
+- Check that you're deploying the backend directory, not the entire repository
+
+#### 3. CORS Errors
+
+- Verify that your backend CORS configuration includes your frontend domain
+- Check that credentials are enabled in both frontend requests and backend CORS config
+- Make sure your cookies are configured with `sameSite: "none"` and `secure: true`
+
+#### 4. Environment Variables Not Working
+
+- Double-check that all environment variables are set in the Vercel dashboard
+- Verify that you're referencing them correctly in your code
+- Remember that environment variables are case-sensitive
+- Redeploy after making changes to environment variables
+
+#### 5. Database Connection Issues
+
+- Verify your MongoDB connection string is correct
+- Make sure your MongoDB Atlas cluster has the correct IP whitelist settings
+- Check Vercel logs for any connection errors
+
+For more detailed troubleshooting, refer to the [VERCEL_DEPLOYMENT.md](backend/VERCEL_DEPLOYMENT.md) file in the backend directory.
 
 ## 🤝 Contributing
 
