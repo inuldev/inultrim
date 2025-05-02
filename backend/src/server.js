@@ -11,7 +11,7 @@ import chatRoutes from "./routes/chat.route.js";
 import { connectDB } from "./lib/db.js";
 
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 5001;
 
 const __dirname = path.resolve();
 
@@ -41,19 +41,41 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+// Add a health check route
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok", message: "Server is running" });
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
 
+// Handle 404 for API routes
+app.use("/api/*", (req, res) => {
+  res.status(404).json({
+    error: "Not Found",
+    message: `Cannot ${req.method} ${req.originalUrl}`,
+    path: req.originalUrl,
+  });
+});
+
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join(__dirname, "../frontend/dist")));
 
-  app.get("*", (req, res) => {
+  app.get("/(.*)", (req, res) => {
     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-  connectDB();
-});
+// Connect to database
+connectDB();
+
+// Only start the server if not being imported (for serverless)
+if (process.env.NODE_ENV !== "production") {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+}
+
+// Export for serverless
+export default app;

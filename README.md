@@ -184,9 +184,9 @@ This application is configured for easy deployment to Vercel. Both the frontend 
 2. Import the same GitHub repository
 3. Configure the project:
    - Root Directory: `backend`
-   - Framework Preset: `Other`
-   - Build Command: `npm install`
-   - Output Directory: `public`
+   - Framework Preset: `Node.js`
+   - Build Command: `npm run vercel-build`
+   - Output Directory: `.`
 4. Add Environment Variables:
    - `MONGO_URI`: Your MongoDB connection string
    - `JWT_SECRET_KEY`: Your JWT secret key
@@ -194,7 +194,22 @@ This application is configured for easy deployment to Vercel. Both the frontend 
    - `STEAM_API_SECRET`: Your Stream API secret
    - `FRONTEND_URL`: URL of your deployed frontend (e.g., https://inultrim.vercel.app)
    - `NODE_ENV`: `production`
+   - `PORT`: `3000` (Vercel's default port)
    - `COOKIE_DOMAIN`: Optional, for cross-domain cookies (e.g., vercel.app)
+5. Click "Deploy"
+
+**Alternative Backend Deployment Method:**
+
+If you encounter issues with the above method, you can try deploying the entire repository:
+
+1. In Vercel dashboard, click "New Project"
+2. Import your GitHub repository
+3. Configure the project:
+   - Root Directory: `.` (root of the repository)
+   - Framework Preset: `Other`
+   - Build Command: `cd backend && npm run vercel-build`
+   - Output Directory: `backend`
+4. Add the same Environment Variables as above
 5. Click "Deploy"
 
 ### Connecting Frontend and Backend

@@ -6,7 +6,8 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "nodemon src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "vercel-build": "echo 'Building for Vercel...'"
   },
   "author": "inuldev",
   "license": "MIT",
