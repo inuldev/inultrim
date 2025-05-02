@@ -162,6 +162,8 @@ npm run dev
 
 This application is configured for easy deployment to Vercel. Both the frontend and backend can be deployed separately.
 
+> **Note**: For detailed backend deployment instructions, see the [VERCEL_DEPLOYMENT.md](backend/VERCEL_DEPLOYMENT.md) file in the backend directory. This contains updated instructions and troubleshooting tips.
+
 #### Frontend Deployment
 
 1. Fork or clone this repository to your GitHub account
@@ -177,106 +179,6 @@ This application is configured for easy deployment to Vercel. Both the frontend 
    - `VITE_STREAM_API_KEY`: Your Stream API key
    - `VITE_BACKEND_URL`: URL of your deployed backend (e.g., https://inultrim-api.vercel.app/api)
 7. Click "Deploy"
-
-#### Backend Deployment
-
-**Method 1: Deploy Backend Only**
-
-1. In Vercel dashboard, click "New Project"
-2. Import your GitHub repository
-3. Configure the project:
-   - Root Directory: `backend`
-   - Framework Preset: `Node.js`
-   - Build Command: `npm run vercel-build`
-   - Output Directory: `.`
-4. Add Environment Variables:
-   - `MONGO_URI`: Your MongoDB connection string
-   - `JWT_SECRET_KEY`: Your JWT secret key
-   - `STEAM_API_KEY`: Your Stream API key
-   - `STEAM_API_SECRET`: Your Stream API secret
-   - `FRONTEND_URL`: URL of your deployed frontend (e.g., https://inultrim.vercel.app)
-   - `NODE_ENV`: `production`
-   - `PORT`: `3000` (Vercel's default port)
-   - `COOKIE_DOMAIN`: Optional, for cross-domain cookies (e.g., vercel.app)
-5. Click "Deploy"
-
-**Method 2: Deploy Entire Repository**
-
-If you encounter issues with Method 1, you can deploy the entire repository:
-
-1. In Vercel dashboard, click "New Project"
-2. Import your GitHub repository
-3. Configure the project:
-   - Root Directory: `.` (root of the repository)
-   - Framework Preset: `Other`
-   - Build Command: `cd backend && npm run vercel-build`
-   - Output Directory: `.`
-4. Add the same Environment Variables as above
-5. Click "Deploy"
-
-**Method 3: Simplified Deployment with API Directory (Recommended)**
-
-This method uses Vercel's API directory convention for serverless functions:
-
-1. In Vercel dashboard, click "New Project"
-2. Import your GitHub repository
-3. Configure the project:
-   - Root Directory: `backend`
-   - Framework Preset: `Other`
-   - Build Command: `npm install`
-   - Output Directory: `.`
-4. Add Environment Variables:
-   - `MONGO_URI`: Your MongoDB connection string
-   - `JWT_SECRET_KEY`: Your JWT secret key
-   - `STEAM_API_KEY`: Your Stream API key
-   - `STEAM_API_SECRET`: Your Stream API secret
-   - `FRONTEND_URL`: URL of your deployed frontend (e.g., https://inultrim.vercel.app)
-   - `NODE_ENV`: `production`
-5. Click "Deploy"
-
-The project includes a minimal `vercel.json` and uses the `api` directory convention, which is the recommended approach for Express.js applications on Vercel.
-
-**Method 4: Using Vercel CLI (Most Reliable)**
-
-If you encounter issues with the dashboard deployment, you can use Vercel CLI:
-
-1. Install Vercel CLI:
-
-   ```bash
-   npm install -g vercel
-   ```
-
-2. Login to Vercel:
-
-   ```bash
-   vercel login
-   ```
-
-3. Deploy Backend:
-
-   ```bash
-   cd backend
-   vercel
-   ```
-
-   - When prompted, select "No" for using project settings
-   - Set the build command to `npm install`
-   - Set the output directory to `.`
-   - Confirm the deployment
-
-4. Deploy Frontend:
-
-   ```bash
-   cd frontend
-   vercel
-   ```
-
-   - Follow the same prompts as for the backend
-
-5. Set Environment Variables:
-   - After deployment, go to the Vercel dashboard
-   - Navigate to your project settings
-   - Add the required environment variables
 
 **Important Notes for Vercel Deployment**
 

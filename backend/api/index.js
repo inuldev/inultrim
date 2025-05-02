@@ -1,4 +1,5 @@
 // Import required modules
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
@@ -13,11 +14,26 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cookieParser());
+
+// Allow multiple origins for CORS
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "https://inultrim.vercel.app",
+  "http://localhost:5173",
+];
+
 app.use(
   cors({
     origin: function (origin, callback) {
-      // Allow all origins for now
-      callback(null, true);
+      // Allow requests with no origin (like mobile apps, curl, etc.)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg =
+          "The CORS policy for this site does not allow access from the specified Origin.";
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
     },
     credentials: true,
   })
@@ -57,4 +73,12 @@ app.use("/api/*", (req, res) => {
 });
 
 // Export the Express app as a serverless function
+// For Vercel, we need to export a handler function
 export default app;
+
+// Export a handler function for serverless environments
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
