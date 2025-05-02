@@ -60,12 +60,12 @@ export async function getRecommendedUsers(req, res) {
     ];
 
     // Debug log to help understand what's happening
-    console.log("Exclude IDs:", {
-      friendsCount: friendIds.length,
-      activeRequestsCount: activeUserIds.length,
-      usersWhoseRequestsIRejected: usersWhoseRequestsIRejected.length,
-      totalExcluded: excludeIds.length,
-    });
+    // console.log("Exclude IDs:", {
+    //   friendsCount: friendIds.length,
+    //   activeRequestsCount: activeUserIds.length,
+    //   usersWhoseRequestsIRejected: usersWhoseRequestsIRejected.length,
+    //   totalExcluded: excludeIds.length,
+    // });
 
     const recommendedUsers = await User.find({
       $and: [
