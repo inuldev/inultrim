@@ -180,8 +180,10 @@ This application is configured for easy deployment to Vercel. Both the frontend 
 
 #### Backend Deployment
 
+**Method 1: Deploy Backend Only**
+
 1. In Vercel dashboard, click "New Project"
-2. Import the same GitHub repository
+2. Import your GitHub repository
 3. Configure the project:
    - Root Directory: `backend`
    - Framework Preset: `Node.js`
@@ -198,9 +200,9 @@ This application is configured for easy deployment to Vercel. Both the frontend 
    - `COOKIE_DOMAIN`: Optional, for cross-domain cookies (e.g., vercel.app)
 5. Click "Deploy"
 
-**Alternative Backend Deployment Method:**
+**Method 2: Deploy Entire Repository**
 
-If you encounter issues with the above method, you can try deploying the entire repository:
+If you encounter issues with Method 1, you can deploy the entire repository:
 
 1. In Vercel dashboard, click "New Project"
 2. Import your GitHub repository
@@ -208,9 +210,25 @@ If you encounter issues with the above method, you can try deploying the entire 
    - Root Directory: `.` (root of the repository)
    - Framework Preset: `Other`
    - Build Command: `cd backend && npm run vercel-build`
-   - Output Directory: `backend`
+   - Output Directory: `.`
 4. Add the same Environment Variables as above
 5. Click "Deploy"
+
+**Method 3: Simplified Deployment (Recommended)**
+
+This method uses Vercel's simplified configuration:
+
+1. In Vercel dashboard, click "New Project"
+2. Import your GitHub repository
+3. Configure the project:
+   - Root Directory: `backend`
+   - Framework Preset: `Node.js`
+   - Build Command: `npm install`
+   - Output Directory: `.`
+4. Add the same Environment Variables as above
+5. Click "Deploy"
+
+The project includes a simplified `vercel.json` that uses rewrites instead of the more complex builds/routes configuration, which should resolve common deployment errors.
 
 ### Connecting Frontend and Backend
 
