@@ -41,6 +41,17 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+// Add a root route handler
+app.get("/", (req, res) => {
+  res.status(200).json({
+    status: "ok",
+    message: "Streaminul API is running",
+    documentation:
+      "API endpoints are available at /api/auth, /api/users, and /api/chat",
+    version: "1.0.0",
+  });
+});
+
 // Add a health check route
 app.get("/api/health", (req, res) => {
   res.status(200).json({ status: "ok", message: "Server is running" });
