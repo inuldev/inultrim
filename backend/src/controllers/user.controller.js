@@ -55,9 +55,8 @@ export async function getRecommendedUsers(req, res) {
     const excludeIds = [
       ...friendIds,
       ...activeUserIds,
-      // Do NOT exclude users whose requests you've rejected
+      // Do NOT exclude users whose requests you've rejected or users who unfriended
       // They should appear in your recommendations again
-      ...usersWhoseRequestsIRejected, // Exclude users whose requests you've rejected
     ];
 
     // Debug log to help understand what's happening
@@ -288,6 +287,53 @@ export async function rejectFriendRequest(req, res) {
     res.status(200).json({ message: "Friend request rejected" });
   } catch (error) {
     console.log("Error in rejectFriendRequest controller", error.message);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+export async function unfriendUser(req, res) {
+  try {
+    const myId = req.user.id;
+    const { id: friendId } = req.params;
+
+    // Check if the user exists
+    const friend = await User.findById(friendId);
+    if (!friend) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if they are actually friends
+    const currentUser = await User.findById(myId);
+    if (!currentUser.friends.includes(friendId)) {
+      return res
+        .status(400)
+        .json({ message: "You are not friends with this user" });
+    }
+
+    // Remove each user from the other's friends array
+    await User.findByIdAndUpdate(myId, {
+      $pull: { friends: friendId },
+    });
+
+    await User.findByIdAndUpdate(friendId, {
+      $pull: { friends: myId },
+    });
+
+    // Find and update any friend requests between the users
+    await FriendRequest.updateMany(
+      {
+        $or: [
+          { sender: myId, recipient: friendId },
+          { sender: friendId, recipient: myId },
+        ],
+        status: "accepted",
+      },
+      { status: "rejected" }
+    );
+
+    res.status(200).json({ message: "Friend removed successfully" });
+  } catch (error) {
+    console.error("Error in unfriendUser controller", error.message);
     res.status(500).json({ message: "Internal Server Error" });
   }
 }

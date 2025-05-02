@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   StreamVideo,
   StreamVideoClient,

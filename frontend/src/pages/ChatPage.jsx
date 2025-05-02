@@ -1,5 +1,5 @@
 import toast from "react-hot-toast";
-import { useParams } from "react-router";
+import { useParams } from "react-router-dom";
 import { StreamChat } from "stream-chat";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";

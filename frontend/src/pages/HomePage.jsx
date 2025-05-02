@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -67,13 +67,19 @@ const HomePage = () => {
     <div className="p-4 sm:p-6 lg:p-8 h-full">
       <div className="container mx-auto space-y-10 h-full">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight flex items-center gap-2">
+            <UsersIcon className="size-6 text-primary" />
             Your Friends
           </h2>
-          <Link to="/notifications" className="btn btn-outline btn-sm">
-            <UsersIcon className="mr-2 size-4" />
-            Friend Requests
-          </Link>
+          <div className="flex gap-2">
+            <Link to="/friends" className="btn btn-primary btn-sm">
+              <UsersIcon className="mr-2 size-4" />
+              View All Friends
+            </Link>
+            <Link to="/notifications" className="btn btn-outline btn-sm">
+              Friend Requests
+            </Link>
+          </div>
         </div>
 
         {loadingFriends ? (
@@ -83,11 +89,27 @@ const HomePage = () => {
         ) : friends.length === 0 ? (
           <NoFriendsFound />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {friends.map((friend) => (
-              <FriendCard key={friend._id} friend={friend} />
-            ))}
-          </div>
+          <>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-medium">Recent Friends</h3>
+              <Link
+                to="/friends"
+                className="text-primary hover:underline text-sm"
+              >
+                See all ({friends.length})
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {/* Show only up to 4 friends on homepage */}
+              {friends.slice(0, 4).map((friend) => (
+                <FriendCard
+                  key={friend._id}
+                  friend={friend}
+                  showUnfriend={false}
+                />
+              ))}
+            </div>
+          </>
         )}
 
         <section>

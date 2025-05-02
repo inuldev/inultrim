@@ -1,5 +1,5 @@
 import { Toaster } from "react-hot-toast";
-import { Navigate, Route, Routes, useLocation } from "react-router";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import HomePage from "./pages/HomePage.jsx";
 import CallPage from "./pages/CallPage.jsx";
@@ -9,6 +9,7 @@ import SignUpPage from "./pages/SignUpPage.jsx";
 import FriendsPage from "./pages/FriendsPage.jsx";
 import OnboardingPage from "./pages/OnboardingPage.jsx";
 import NotificationsPage from "./pages/NotificationsPage.jsx";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
 
 import Layout from "./components/Layout.jsx";
 import useAuthUser from "./hooks/useAuthUser.js";
@@ -129,6 +130,8 @@ const App = () => {
             )
           }
         />
+        {/* Fallback route untuk halaman yang tidak ditemukan */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
       <Toaster />
