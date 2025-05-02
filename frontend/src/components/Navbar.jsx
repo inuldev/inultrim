@@ -1,18 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
-import {
-  BellIcon,
-  LogOutIcon,
-  ShipWheelIcon,
-  LayoutGrid,
-  Menu,
-} from "lucide-react";
+import { BellIcon, LogOutIcon, ShipWheelIcon } from "lucide-react";
 
 import useLogout from "../hooks/useLogout";
 import useAuthUser from "../hooks/useAuthUser";
 
 import ThemeSelector from "./ThemeSelector";
 
-const Navbar = ({ onToggleMobileNav, currentMobileNav }) => {
+const Navbar = () => {
   const { authUser } = useAuthUser();
   const location = useLocation();
   const isChatPage = location.pathname?.startsWith("/chat");
@@ -36,23 +30,6 @@ const Navbar = ({ onToggleMobileNav, currentMobileNav }) => {
           )}
 
           <div className="flex items-center gap-3 sm:gap-4 ml-auto">
-            {/* Mobile Navigation Toggle - only visible on mobile */}
-            <button
-              className="btn btn-ghost btn-circle md:hidden"
-              onClick={onToggleMobileNav}
-              title={
-                currentMobileNav === "sidebar"
-                  ? "Switch to bottom navigation"
-                  : "Switch to sidebar navigation"
-              }
-            >
-              {currentMobileNav === "sidebar" ? (
-                <LayoutGrid className="h-5 w-5 text-base-content opacity-70" />
-              ) : (
-                <Menu className="h-5 w-5 text-base-content opacity-70" />
-              )}
-            </button>
-
             <Link to={"/notifications"}>
               <button className="btn btn-ghost btn-circle">
                 <BellIcon className="h-6 w-6 text-base-content opacity-70" />
