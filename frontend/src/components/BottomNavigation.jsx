@@ -42,25 +42,6 @@ const BottomNavigation = () => {
           <span className="text-xs mt-1">Friends</span>
         </Link>
         <Link
-          to="/messages"
-          className={`flex flex-col items-center justify-center py-2 flex-1 ${
-            location.pathname.startsWith("/chat")
-              ? "text-primary font-medium"
-              : "text-base-content opacity-75 hover:opacity-100"
-          }`}
-        >
-          <div
-            className={`p-1 rounded-full ${
-              location.pathname.startsWith("/chat")
-                ? "bg-primary bg-opacity-20"
-                : ""
-            }`}
-          >
-            <MessageCircle size={20} />
-          </div>
-          <span className="text-xs mt-1">Chat</span>
-        </Link>
-        <Link
           to="/notifications"
           className={`flex flex-col items-center justify-center py-2 flex-1 ${
             location.pathname === "/notifications"
@@ -78,23 +59,6 @@ const BottomNavigation = () => {
             <Bell size={20} />
           </div>
           <span className="text-xs mt-1">Alerts</span>
-        </Link>
-        <Link
-          to="/profile"
-          className={`flex flex-col items-center justify-center py-2 flex-1 ${
-            location.pathname === "/profile"
-              ? "text-primary font-medium"
-              : "text-base-content opacity-75 hover:opacity-100"
-          }`}
-        >
-          <div
-            className={`p-1 rounded-full ${
-              location.pathname === "/profile" ? "bg-primary bg-opacity-20" : ""
-            }`}
-          >
-            <User size={20} />
-          </div>
-          <span className="text-xs mt-1">Profile</span>
         </Link>
       </div>
     </nav>
